@@ -1,0 +1,41 @@
+{
+  "Menu": {
+    "deep fryer": [
+      "french fries",
+      "funnel cake",
+      "corn dogs"
+    ],
+    "grill": [
+      "hamburger",
+      "veggie burger"
+    ],
+    "milkshake maker": [
+      "chocolate shake",
+      "strawberry shake",
+      "vanilla shake"
+    ],
+    "drink machine": [
+      "small drink",
+      "medium drink",
+      "large drink",
+      "coffee"
+    ]
+  },
+  "Customers": [{
+    "order": [
+      "hamburger",
+      "french fries",
+      "vanilla shake",
+      "large drink"
+    ]
+  }, {
+    "order": [
+      "hamburger",
+      "veggie burger",
+      "corn dogs",
+      "french fries",
+      "chocolate shake",
+      "large drink"
+    ]
+  }]
+}
