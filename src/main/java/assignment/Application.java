@@ -25,12 +25,11 @@ public class Application {
         Scanner reader = new Scanner(System.in);
         String fileName = reader.nextLine();
         reader.close();
-        System.out.println(fileName);
 
         Gson gson = new Gson();
         FileReader fileReader;
         try {
-            fileReader = new FileReader("/Users/leo/Desktop/workspace/assignment/src/main/resources/data.json");
+            fileReader = new FileReader(fileName);
         } catch (FileNotFoundException e) {
             System.out.println("file not found");
             return;
