@@ -83,13 +83,12 @@ public class Application {
         }
     }
 
-    public static class Appliance implements Runnable {
+    public static class Appliance {
 
         Semaphore semaphore;
 
         int seconds;
 
-        BlockingQueue<Order> orderQueue = new LinkedBlockingQueue<>();
         BlockingQueue<Order> finishingQueue;
 
         public Appliance(int items, int seconds, BlockingQueue<Order> finishQueue) {
@@ -99,32 +98,22 @@ public class Application {
         }
 
         public void handle(Order order, Item item)  {
-            try {
-                orderQueue.put(order);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void run() {
-            while (true) {
-                try {
-                    Order order = orderQueue.take();
-                    semaphore.acquire();
-                    Thread.sleep(seconds * 1000);
-                    semaphore.release();
-                    order.finishedCount.incrementAndGet();
-//                    System.out.println(order.id);
-                    if (order.finished()) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        semaphore.acquire();
+                        Thread.sleep(seconds * 1000);
+                        semaphore.release();
                         finishingQueue.put(order);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
-            }
+            }).start();
         }
     }
+
 
     public static class Kitchen implements Runnable {
 
@@ -143,10 +132,7 @@ public class Application {
             milkshakeMaker = new Appliance(2, 3, finishQueue);
             drinkMachine = new Appliance(2, 2, finishQueue);
 
-            new Thread(deepFryer).start();
-            new Thread(grill).start();
-            new Thread(milkshakeMaker).start();
-            new Thread(drinkMachine).start();
+
         }
 
         @Override
@@ -196,13 +182,18 @@ public class Application {
             while(true) {
                 try {
                     Order order = queue.take();
-                    order.endTime = LocalDateTime.now();
-                    mysql.insert(order);
-                    System.out.println(String.format("%s %s %d", Utils.currentTime(), "Completed order", order.id));
-                    counter++;
-                    if (counter == totalCount) {
-                        System.out.println("All orders complete");
+                    order.finishedCount.incrementAndGet();
+//                    System.out.println(order.id + " " + order.finishedCount.intValue());
+                    if (order.finished()) {
+                        order.endTime = LocalDateTime.now();
+                        mysql.insert(order);
+                        System.out.println(String.format("%s %s %d", Utils.currentTime(), "Completed order", order.id));
+                        counter++;
+                        if (counter == totalCount) {
+                            System.out.println("All orders complete");
+                        }
                     }
+
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
