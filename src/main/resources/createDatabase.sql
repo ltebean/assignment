@@ -4,3 +4,9 @@ CREATE TABLE `order` (
   `start_time` datetime NOT NULL,
   `end_time` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `item`(
+  `order_id` int(11) NOT NULL,
+  `name`  varchar(50) not null,
+  `number` int(11)  not null
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
